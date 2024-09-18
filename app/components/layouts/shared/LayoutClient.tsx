@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import Sidebar from './sidebar'
 import Header from './header'
-
+import AuthProvider from '@/app/libs/helpers/auth-provider'
 import Footer from "@/app/components/layouts/shared/footer";
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
@@ -12,16 +12,18 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
 
   return (
     <div className="flex h-full">
-      <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      <div className="flex flex-col flex-1 lg:pl-72">
+      <AuthProvider>
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <div className="flex flex-col flex-1 lg:pl-72">
         <Header setSidebarOpen={setSidebarOpen} />
         <main className="py-10">
           <div className="px-4 sm:px-6 lg:px-8">
             {children}
           </div>
         </main>
-        <Footer />
-      </div>
+          <Footer />
+        </div>
+      </AuthProvider>
     </div>
   )
 }

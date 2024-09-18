@@ -7,20 +7,25 @@ import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import GoogleSignInButton from "@/app/components/button/google/oauth";
 
+interface LoginInputProps {
+    callbackUrl: string
+}
+
 type FormValues = z.infer<typeof userLoginValidation>;
 
-const LoginInput = ({ callbackUrl }: { callbackUrl: string }) => {
+const LoginInput = ({ callbackUrl }: LoginInputProps) => {
 
     const {register, handleSubmit, formState: {errors}} = useForm<FormValues>({
         resolver: zodResolver(userLoginValidation)
     });
     
     async function onSubmit(values: z.infer<typeof userLoginValidation>) {
-        await signIn("credentials", {
-            email: values.email,
-            password: values.password,
-            callbackUrl
-        })
+        console.log(values)
+        // await signIn("credentials", {
+        //     email: values.email,
+        //     password: values.password,
+        //     callbackUrl
+        // })
     }
 
     return (
@@ -39,7 +44,7 @@ const LoginInput = ({ callbackUrl }: { callbackUrl: string }) => {
                             autoComplete="email"
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                        {/* {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>} */}
                     </div>
                 </div>
 
@@ -56,7 +61,7 @@ const LoginInput = ({ callbackUrl }: { callbackUrl: string }) => {
                             autoComplete="current-password"
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+                        {/* {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>} */}
                     </div>
                 </div>
 

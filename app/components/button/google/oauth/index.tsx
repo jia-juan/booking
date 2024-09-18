@@ -1,9 +1,9 @@
 import { signIn } from 'next-auth/react';
 
 interface GoogleSignInButtonProps {
-    children: React.ReactNode;
-    callbackUrl: string;
-}
+    children: React.ReactNode
+    callbackUrl: string
+  }
 
 const GoogleSignInButton = ({ children, callbackUrl }: GoogleSignInButtonProps) => {
 

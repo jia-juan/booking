@@ -1,4 +1,4 @@
-import classNamesActivate from "@/app/components/lib/classNamesActivate"
+import classNamesActivate from "@/app/components/libs/classNamesActivate"
 
 const tabs = [
     { name: 'Applied', href: '#', count: '52', current: false },

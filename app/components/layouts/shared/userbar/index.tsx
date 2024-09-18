@@ -5,7 +5,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { BellIcon } from '@heroicons/react/24/outline'
 import { USER_NAVIGATION } from './constants'
-import classNamesActivate from '../../../lib/classNamesActivate'
+import classNamesActivate from '../../../libs/classNamesActivate'
 import DefaultAvatar from '@/app/components/ui/avatar/default'
 
 export default function Userbar() {

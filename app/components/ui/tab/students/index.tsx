@@ -1,4 +1,4 @@
-import classNamesActivate from "@/app/components/lib/classNamesActivate"
+import classNamesActivate from "@/app/components/libs/classNamesActivate"
 import { TAB_STUDENTS } from "./constants"
 
 

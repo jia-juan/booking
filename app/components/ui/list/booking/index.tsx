@@ -1,7 +1,7 @@
 
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid'
-import classNamesActivate from "@/app/components/lib/classNamesActivate"
+import classNamesActivate from "@/app/components/libs/classNamesActivate"
 
 const statuses = {
     Complete: 'text-green-700 bg-green-50 ring-green-600/20',

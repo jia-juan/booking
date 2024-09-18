@@ -4,7 +4,7 @@ import {
     XMarkIcon,
     Cog6ToothIcon,
 } from '@heroicons/react/24/outline'
-import classNamesActivate from '../../../lib/classNamesActivate'
+import classNamesActivate from '../../../libs/classNamesActivate'
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean; setSidebarOpen: (open: boolean) => void }) {
     return (

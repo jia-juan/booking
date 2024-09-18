@@ -2,20 +2,20 @@
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { userSignInValidation } from "@/app/libs/validators/auth";
+import { userLoginValidation } from "@/app/libs/validators/auth";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
 import GoogleSignInButton from "@/app/components/button/google/oauth";
 
-type FormValues = z.infer<typeof userSignInValidation>;
+type FormValues = z.infer<typeof userLoginValidation>;
 
 const LoginInput = ({ callbackUrl }: { callbackUrl: string }) => {
 
     const {register, handleSubmit, formState: {errors}} = useForm<FormValues>({
-        resolver: zodResolver(userSignInValidation)
+        resolver: zodResolver(userLoginValidation)
     });
     
-    async function onSubmit(values: z.infer<typeof userSignInValidation>) {
+    async function onSubmit(values: z.infer<typeof userLoginValidation>) {
         await signIn("credentials", {
             email: values.email,
             password: values.password,

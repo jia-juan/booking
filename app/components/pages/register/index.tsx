@@ -1,6 +1,6 @@
-import LoginInput from "@/app/components/input/login";
+import RegisterInput from "@/app/components/input/register";
 
-const LoginPage = () => {
+const RegisterPage = () => {
     return (
         <div className="w-full">
             <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -9,21 +9,24 @@ const LoginPage = () => {
                         alt="Your Company"
                         src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
                         className="mx-auto h-10 w-auto"
-
+                        
                     />
                     <h2 className="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                        用戶登入
+                        註冊一個帳號
                     </h2>
                 </div>
 
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
-                    <LoginInput callbackUrl='/#' />
+                    <RegisterInput
+                        // callbackUrl="/#"
+                        // signUpWithCredentials={signUpWithCredentials}
+                    />
                 </div>
 
                 <p className="mt-10 text-center text-sm text-gray-500">
-                    還不是會員嗎？{' '}
-                    <a href="/register" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                        註冊一個帳號
+                    已經有帳號了嗎？{' '}
+                    <a href="/login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+                        登入
                     </a>
                 </p>
             </div>
@@ -31,4 +34,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default RegisterPage;

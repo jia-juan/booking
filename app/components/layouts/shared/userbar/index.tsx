@@ -8,13 +8,9 @@ import { USER_NAVIGATION } from './constants'
 import classNamesActivate from '../../../lib/classNamesActivate'
 import DefaultAvatar from '@/app/components/ui/avatar/default'
 
-
-
 export default function Userbar() {
 
   const session = useSession();
-
-  console.log(session.data)
 
   return (
     <div className="flex items-center gap-x-4 lg:gap-x-6">
@@ -61,6 +57,7 @@ export default function Userbar() {
                         active ? 'bg-gray-50' : '',
                         'block px-3 py-1 text-sm leading-6 text-gray-900'
                       )}
+                      onClick={item.onClick}
                     >
                       {item.name}
                     </a>

@@ -5,7 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { userLoginValidation } from "@/app/libs/validators/auth";
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
+import { useState } from "react";
 import GoogleSignInButton from "@/app/components/button/google/oauth";
+import Notifications from "@/app/components/ui/notifications";
 
 interface LoginInputProps {
     callbackUrl: string
@@ -14,18 +16,25 @@ interface LoginInputProps {
 type FormValues = z.infer<typeof userLoginValidation>;
 
 const LoginInput = ({ callbackUrl }: LoginInputProps) => {
-
-    const {register, handleSubmit, formState: {errors}} = useForm<FormValues>({
+    const [notification, setNotification] = useState<{ type: 'success' | 'error', title: string, message: string } | null>(null);
+    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
         resolver: zodResolver(userLoginValidation)
     });
-    
+
     async function onSubmit(values: z.infer<typeof userLoginValidation>) {
-        console.log(values)
-        // await signIn("credentials", {
-        //     email: values.email,
-        //     password: values.password,
-        //     callbackUrl
-        // })
+        const result = await signIn("credentials", {
+            redirect: false,
+            email: values.email,
+            password: values.password,
+            callbackUrl
+        });
+
+        if (result?.error) {
+            setNotification({ type: 'error', title: '錯誤', message: result.error });
+        } else {
+            // 登入成功，重定向或其他操作
+            window.location.href = callbackUrl;
+        }
     }
 
     return (
@@ -44,7 +53,7 @@ const LoginInput = ({ callbackUrl }: LoginInputProps) => {
                             autoComplete="email"
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
-                        {/* {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>} */}
+                        {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
                     </div>
                 </div>
 
@@ -61,7 +70,7 @@ const LoginInput = ({ callbackUrl }: LoginInputProps) => {
                             autoComplete="current-password"
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
-                        {/* {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>} */}
+                        {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
                     </div>
                 </div>
 
@@ -97,7 +106,7 @@ const LoginInput = ({ callbackUrl }: LoginInputProps) => {
             <div>
                 <div className="relative mt-10">
                     <div aria-hidden="true" className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200"/>
+                        <div className="w-full border-t border-gray-200" />
                     </div>
                     <div className="relative flex justify-center text-sm font-medium leading-6">
                         <span className="bg-white px-6 text-gray-900">或繼續使用</span>
@@ -110,6 +119,7 @@ const LoginInput = ({ callbackUrl }: LoginInputProps) => {
                     </GoogleSignInButton>
                 </div>
             </div>
+            {notification && <Notifications type={notification.type} title={notification.title} message={notification.message} />}
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import { NextAuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
-import { loginWithOauth, getUserByEmail } from "@/app/libs/utils/auth.actions"
+import { loginWithOauth, getUserByEmail, loginWithCredentials } from "@/app/libs/utils/auth.actions"
+import CredentialsProvider from "next-auth/providers/credentials"
 
 export const nextauthOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
@@ -9,6 +10,25 @@ export const nextauthOptions: NextAuthOptions = {
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!
         }),
+        CredentialsProvider({
+            name: "Credentials",
+            credentials: {
+                email: { label: "Email", type: "email", required: true },
+                password: { label: "Password", type: "password", required: true }
+            },
+            async authorize(credentials) {
+                if (!credentials?.email || !credentials?.password) {
+                    return null
+                }
+
+                const user = await loginWithCredentials({
+                    email: credentials?.email,
+                    password: credentials?.password
+                })
+
+                return user
+            }
+        })
     ],
     callbacks: {
         async signIn({ account, profile }) {

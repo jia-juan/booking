@@ -2,16 +2,21 @@
 
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userRegisterValidation } from "@/app/libs/validators/auth";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import Notifications from "@/app/components/ui/notifications";
+import { RegisterWithCredentialsParams } from "@/app/libs/utils/auth.actions";
 
 type FormValues = z.infer<typeof userRegisterValidation>;
 
-const RegisterInput = () => {
+interface RegisterInputProps {
+    callbackUrl?: string
+    registerWithCredentials: (values: RegisterWithCredentialsParams) => Promise<{ success?: boolean }>
+}
+
+const RegisterInput = ({ registerWithCredentials }: RegisterInputProps) => {
     const router = useRouter()
     const [notification, setNotification] = useState<{ type: 'success' | 'error', title: string, message: string } | null>(null);
 
@@ -21,11 +26,11 @@ const RegisterInput = () => {
 
     async function onSubmit(values: z.infer<typeof userRegisterValidation>) {
         try {
-            await axios.post('/api/register', values)
+            await registerWithCredentials(values)
             setNotification({ type: 'success', title: '成功', message: '註冊成功' })
             router.push('/login')
         } catch (error: any) {
-            setNotification({ type: 'error', title: '錯誤', message: error.response.data.message })
+            setNotification({ type: 'error', title: '錯誤', message: error.message })
         }
     }
 

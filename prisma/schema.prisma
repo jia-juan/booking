@@ -35,15 +35,96 @@ model User {
     instagram String?
 
     // 推播通知
-    notifyBooking Boolean @default(false)
-    notifyEvent   Boolean @default(false)
+    notifyBooking Boolean   @default(false)
+    notifyEvent   Boolean   @default(false)
+    notifyHow     NotifyHow @default(NONE)
 
-    notifyHow NotifyHow @default(NONE)
+    // 角色
+    role Role @default(STUDENT)
 
-    //
-
-    role     Role   @default(TEACHER) // TODO: change to STUDENT(production)
+    // 登入方式
     provider String @default("credentials")
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    Booking   Booking[]
+
+    EventTeacherRelation Event[]               @relation("EventTeacherRelation")
+    EventStudentRelation Event[]               @relation("EventStudentRelation")
+    StudentWishRegister  StudentWishRegister[] @relation("StudentWishRegisterStudentRelation")
+    TeacherWishRegister  StudentWishRegister[] @relation("StudentWishRegisterTeacherRelation")
+    RegisteredStudent    RegisteredStudent[]   @relation("RegisteredStudentStudentRelation")
+    RegisteredTeacher    RegisteredStudent[]   @relation("RegisteredStudentTeacherRelation")
+}
+
+enum StudentWishRegisterStatus {
+    PENDING
+    REJECTED
+    CONFIRMED
+}
+
+model StudentWishRegister {
+    id Int @id @default(autoincrement())
+
+    studentId Int
+    student   User @relation("StudentWishRegisterStudentRelation", fields: [studentId], references: [id])
+
+    teacherId Int
+    teacher   User @relation("StudentWishRegisterTeacherRelation", fields: [teacherId], references: [id])
+
+    status StudentWishRegisterStatus @default(PENDING)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model RegisteredStudent {
+    id Int @id @default(autoincrement())
+
+    studentId Int
+    student   User @relation("RegisteredStudentStudentRelation", fields: [studentId], references: [id])
+
+    teacherId Int
+    teacher   User @relation("RegisteredStudentTeacherRelation", fields: [teacherId], references: [id])
+}
+
+enum BookingStatus {
+    PENDING
+    REJECTED
+    CONFIRMED
+}
+
+model Booking {
+    id Int @id @default(autoincrement())
+
+    createdById Int
+    createdBy   User @relation(fields: [createdById], references: [id])
+
+    status BookingStatus @default(PENDING)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+enum EventStatus {
+    PENDING
+    CANCELLED
+    COMPLETED
+}
+
+model Event {
+    id Int @id @default(autoincrement())
+
+    teacherId Int
+    teacher   User @relation("EventTeacherRelation", fields: [teacherId], references: [id])
+
+    studentId Int
+    student   User @relation("EventStudentRelation", fields: [studentId], references: [id])
+
+    startAt DateTime
+    endAt   DateTime
+
+    status EventStatus @default(PENDING)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

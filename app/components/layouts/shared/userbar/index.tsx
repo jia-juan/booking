@@ -32,7 +32,7 @@ export default function Userbar() {
               {session.data.user?.image ? (
                 <img
                   alt="用戶照片"
-                  src={session.data.user?.image}
+                  src={session.data.user.image}
                   className="h-8 w-8 rounded-full bg-gray-50"
                 />
               ) : (

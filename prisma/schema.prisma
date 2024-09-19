@@ -4,7 +4,7 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 enum Role {
@@ -13,30 +13,38 @@ enum Role {
     STUDENT
 }
 
+enum NotifyHow {
+    EMAIL
+    LINE
+    NONE
+}
+
 model User {
-    id        Int       @id @default(autoincrement())
-    
-    email     String    @unique
-    name      String?
-    password  String?
+    id       Int       @id @default(autoincrement())
+    email    String    @unique
+    name     String?
+    password String?
     // 個人資料
-    birthday  DateTime?
-    phone     String?
-    image     String?
-    lineId    String?
+    birthday DateTime?
+    phone    String?
+    image    String?
+    lineId   String?
 
     // 社群帳號
     facebook  String?
     instagram String?
 
     // 推播通知
-    
+    notifyBooking Boolean @default(false)
+    notifyEvent   Boolean @default(false)
+
+    notifyHow NotifyHow @default(NONE)
 
     //
-    
-    role      Role      @default(TEACHER)  // TODO: change to STUDENT(production)
-    provider  String    @default("credentials")
-    
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
+
+    role     Role   @default(TEACHER) // TODO: change to STUDENT(production)
+    provider String @default("credentials")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }

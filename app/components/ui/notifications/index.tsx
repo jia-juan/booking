@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 import { notificationTypes } from './constants'
@@ -13,6 +13,14 @@ interface NotificationsProps {
 
 export default function Notifications({ type = 'success', title, message }: NotificationsProps) {
   const [show, setShow] = useState(true)
+
+  useEffect(() => {
+    if (type === 'success') {
+      const timer = setTimeout(() => setShow(false), 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [type])
+
   const { icon: Icon, defaultTitle, defaultMessage, iconColor } = notificationTypes[type as keyof typeof notificationTypes]
 
   return (
@@ -20,7 +28,7 @@ export default function Notifications({ type = 'success', title, message }: Noti
       {/* Global notification live region, render this permanently at the end of the document */}
       <div
         aria-live="assertive"
-        className="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6"
+        className="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-50" // 增加 z-index 屬性
       >
         <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
           {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}

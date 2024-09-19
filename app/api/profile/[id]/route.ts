@@ -27,8 +27,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
             }
         })
     } catch (error) {
-        return NextResponse.json({ error: error }, { status: 40 });
+        return NextResponse.json({ error: error }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'User data updated successfully' }, { status: 200 });
+    return NextResponse.json({ message: '更新成功' }, { status: 200 });
 }

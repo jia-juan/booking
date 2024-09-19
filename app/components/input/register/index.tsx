@@ -1,20 +1,32 @@
 "use client"
 
 import { z } from "zod";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { userRegisterValidation } from "@/app/libs/validators/auth";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
+import Notifications from "@/app/components/ui/notifications";
 
 type FormValues = z.infer<typeof userRegisterValidation>;
 
 const RegisterInput = () => {
+    const router = useRouter()
+    const [notification, setNotification] = useState<{ type: 'success' | 'error', title: string, message: string } | null>(null);
+
     const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
         resolver: zodResolver(userRegisterValidation)
     });
 
     async function onSubmit(values: z.infer<typeof userRegisterValidation>) {
-        // todo 註冊時做
-        console.log(values)
+        try {
+            await axios.post('/api/register', values)
+            setNotification({ type: 'success', title: '成功', message: '註冊成功' })
+            router.push('/login')
+        } catch (error: any) {
+            setNotification({ type: 'error', title: '錯誤', message: error.response.data.message })
+        }
     }
 
     return (
@@ -33,7 +45,7 @@ const RegisterInput = () => {
                             autoComplete="name"
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>}
+                        {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>}
                     </div>
                 </div>
 
@@ -50,7 +62,7 @@ const RegisterInput = () => {
                             autoComplete="email"
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                        {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
                     </div>
                 </div>
 
@@ -67,7 +79,7 @@ const RegisterInput = () => {
                             autoComplete="new-password"
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
-                        {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>}
+                        {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
                     </div>
                 </div>
 
@@ -85,7 +97,7 @@ const RegisterInput = () => {
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         />
                         {errors.confirmPassword &&
-                            <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>}
+                            <p className="mt-2 text-sm text-red-600">{errors.confirmPassword.message}</p>}
                     </div>
                 </div>
 
@@ -113,7 +125,7 @@ const RegisterInput = () => {
                     </button>
                 </div>
             </form>
-
+            {notification && <Notifications type={notification.type} title={notification.title} message={notification.message} />}
         </div>
     )
 }

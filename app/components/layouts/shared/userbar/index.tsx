@@ -6,7 +6,7 @@ import { ChevronDownIcon } from '@heroicons/react/20/solid'
 import { BellIcon } from '@heroicons/react/24/outline'
 import { USER_NAVIGATION } from './constants'
 import classNamesActivate from '../../../libs/classNamesActivate'
-import DefaultAvatar from '@/app/components/ui/avatar/default'
+import DefaultAvatar from '@/app/components/ui/avatar/default/eight'
 
 export default function Userbar() {
 

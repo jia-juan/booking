@@ -25,11 +25,11 @@ class UserService {
         return wishRegisters.map(rs => rs.student);
     }
 
-    async reviewStudentWishRegister(teacherId: number, wishRegisterId: number, approve: boolean) {
+    async reviewStudentWishRegister(teacherId: number, studentId: number) {
         // 找到對應的StudentWishRegister
         const wishRegister = await prisma.studentWishRegister.findFirst({
             where: {
-                id: wishRegisterId,
+                studentId,
                 teacherId,
                 status: 'PENDING'
             }
@@ -39,27 +39,19 @@ class UserService {
             throw new Error('找不到對應的StudentWishRegister');
         }
 
-        if (approve) {
-            // 審核通過，新增RegisteredStudent
-            await prisma.registeredStudent.create({
-                data: {
-                    studentId: wishRegister.studentId,
-                    teacherId: wishRegister.teacherId
-                }
-            });
+        await prisma.registeredStudent.create({
+            data: {
+                studentId: wishRegister.studentId,
+                teacherId: wishRegister.teacherId
+            }
+        });
 
-            // 更新StudentWishRegister狀態為CONFIRMED
-            await prisma.studentWishRegister.update({
-                where: { id: wishRegisterId },
-                data: { status: 'CONFIRMED' }
-            });
-        } else {
-            // 審核拒絕，更新StudentWishRegister狀態為REJECTED
-            await prisma.studentWishRegister.update({
-                where: { id: wishRegisterId },
-                data: { status: 'REJECTED' }
-            });
-        }
+        // 更新StudentWishRegister狀態為CONFIRMED
+        await prisma.studentWishRegister.update({
+            where: { id: wishRegister.id },
+            data: { status: 'CONFIRMED' }
+        });
+
     }
 
     async deleteRegisteredStudent(teacherId: number, studentId: number) {
@@ -199,8 +191,71 @@ class UserService {
             }
         });
 
-        return { registeredTeachers, total };
+        const teachers = registeredTeachers.map(rt => rt.teacher);
+
+        return { teachers: teachers, total };
     }
+
+    async getStudentHasRegisteredPagination(teacherId: number, page: number, limit: number) {
+        // 老師取得所有註冊學員
+        const offset = page * limit;
+        const registeredStudents = await prisma.registeredStudent.findMany({
+            where: {
+                teacherId
+            },
+            skip: offset,   
+            take: limit,
+            include: {
+                student: true
+            },
+            orderBy: {
+                id: 'asc'
+            }
+        });
+
+        const total = await prisma.registeredStudent.count({
+            where: {
+                teacherId
+            }
+        });
+
+        // 提取每個registeredStudent中的student屬性
+        const students = registeredStudents.map(rs => rs.student);
+
+        return { students: students, total };
+    }
+
+    async getStudentHasWishRegisterPagination(teacherId: number, page: number, limit: number) {
+        // 老師取得學員申請（未審核）
+        const offset = page * limit;
+        const wishRegisterStudents = await prisma.studentWishRegister.findMany({
+            where: {
+                teacherId,
+                status: 'PENDING'
+            },
+            skip: offset,
+            take: limit,
+            include: {
+                student: true
+            },
+            orderBy: {
+                id: 'asc'
+            }
+        });
+
+        const total = await prisma.studentWishRegister.count({
+            where: {
+                teacherId,
+                status: 'PENDING'
+            }
+        });
+
+        // 提取每個wishRegisterStudent中的student屬性
+        const students = wishRegisterStudents.map(wrs => wrs.student);
+
+        return { students: students, total };
+    }
+
 }
 
 export default UserService;

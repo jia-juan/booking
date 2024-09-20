@@ -41,16 +41,24 @@ export default function TeachersPage() {
         if (registeredData && allData) {
             const total = tab === 'registered' ? tabCounts.registered : tabCounts.all;
             setTotalPages(Math.ceil(total / limit));
-            setTeachers(tab === 'registered' ? registeredData?.registeredTeachers : allData?.teachers);
+            setTeachers(tab === 'registered' ? registeredData?.teachers : allData?.teachers);
         }
     }, [tab, tabCounts, limit, registeredData, allData]);
 
     const queryClient = useQueryClient();
 
-    const handleButtonClick = async (teacherId: string) => {
-        console.log(`Teacher ID: ${teacherId} button clicked`);
+    const handleRegisterClick = async (teacherId: string) => {
         // 處理按鈕點擊的邏輯
         await axios.post('/api/user/teachers/all', { teacherId });
+        // 重新獲取資料
+        queryClient.invalidateQueries({ queryKey: ["registeredData"] });
+        queryClient.invalidateQueries({ queryKey: ["allData"] });
+    }
+
+    const handleBookingClick = async (teacherId: string) => {
+        // 處理按鈕點擊的邏輯
+        // TODO 預約課程 -> /calendar/
+        // await axios.post('/api/user/teachers/all', { teacherId });
         // 重新獲取資料
         queryClient.invalidateQueries({ queryKey: ["registeredData"] });
         queryClient.invalidateQueries({ queryKey: ["allData"] });
@@ -59,7 +67,7 @@ export default function TeachersPage() {
     return (
         <>
             <TabTeachers setTab={setTab} tabCounts={tabCounts} />
-            <Teachers teachers={teachers} onButtonClick={handleButtonClick} />
+            <Teachers teachers={teachers} tab={tab} onRegisterClick={handleRegisterClick} onBookingClick={handleBookingClick} />
             <Pagination page={page} totalPages={totalPages} setPage={setPage} />
         </>
     )

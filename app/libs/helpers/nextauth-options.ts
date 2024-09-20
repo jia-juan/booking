@@ -44,6 +44,7 @@ export const nextauthOptions: NextAuthOptions = {
                 token._id = user._id
                 token.role = user.role
                 token.provider = user.provider
+                token.image = user.image
             }
             return token
         },
@@ -55,7 +56,8 @@ export const nextauthOptions: NextAuthOptions = {
                     name: token.name,
                     _id: token._id,
                     role: token.role,
-                    provider: token.provider
+                    provider: token.provider,
+                    image: token.image
                 }
             }
         }

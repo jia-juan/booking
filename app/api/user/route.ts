@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import StudentsController from './students.controller';
+import UserController from './user.controller';
 import { getServerSession } from 'next-auth';
 import { nextauthOptions } from '@/app/libs/helpers/nextauth-options';
 
-const studentsController = new StudentsController();
+const studentsController = new UserController();
 
 export async function GET(request: NextRequest) {
     const session = await getServerSession(nextauthOptions);

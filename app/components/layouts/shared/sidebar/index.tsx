@@ -1,4 +1,4 @@
-import { MAIN_NAVIGATION, SUB_NAVIGATION } from "./constants";
+import { MAIN_NAVIGATION, ADMIN_NAVIGATION, STUDENT_NAVIGATION } from "./constants";
 import { Dialog, DialogBackdrop, DialogPanel, TransitionChild } from '@headlessui/react'
 import {
     XMarkIcon,
@@ -6,16 +6,16 @@ import {
 } from '@heroicons/react/24/outline'
 import classNamesActivate from '../../../libs/classNamesActivate'
 import { useSession } from 'next-auth/react'
+import Loading from '@/app/components/ui/loading'
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean; setSidebarOpen: (open: boolean) => void }) {
-    const { data: session } = useSession()
+    const { data: session, status } = useSession()
+    
+    if (status === 'loading') {
+        return <Loading />
+    }
 
-    const filteredMainNavigation = MAIN_NAVIGATION.filter(item => {
-        if (session?.user.role === 'STUDENT') {
-            return item.name === '行事曆' || item.name === '預約';
-        }
-        return true;
-    });
+    const navigation = session?.user.role === "STUDENT" ? STUDENT_NAVIGATION : MAIN_NAVIGATION;
 
     return (
         <>
@@ -46,7 +46,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: 
                                 <ul role="list" className="flex flex-1 flex-col gap-y-7">
                                     <li>
                                         <ul role="list" className="-mx-2 space-y-1">
-                                            {filteredMainNavigation.map((item) => (
+                                            {navigation.map((item) => (
                                                 <li key={item.name}>
                                                     <a
                                                         href={item.href}
@@ -75,7 +75,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: 
                                             <li>
                                                 <div className="text-xs font-semibold leading-6 text-gray-400">Manager</div>
                                                 <ul role="list" className="-mx-2 mt-2 space-y-1">
-                                                    {SUB_NAVIGATION.map((sub_item) => (
+                                                    {ADMIN_NAVIGATION.map((sub_item) => (
                                                         <li key={sub_item.name}>
                                                             <a
                                                                 href={sub_item.href}
@@ -138,7 +138,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: 
                         <ul role="list" className="flex flex-1 flex-col gap-y-7">
                             <li>
                                 <ul role="list" className="-mx-2 space-y-1">
-                                    {filteredMainNavigation.map((item) => (
+                                    {navigation.map((item) => (
                                         <li key={item.name}>
                                             <a
                                                 href={item.href}
@@ -167,7 +167,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: 
                                     <li>
                                         <div className="text-xs font-semibold leading-6 text-gray-400">Manager</div>
                                         <ul role="list" className="-mx-2 mt-2 space-y-1">
-                                            {SUB_NAVIGATION.map((sub_item) => (
+                                            {ADMIN_NAVIGATION.map((sub_item) => (
                                                 <li key={sub_item.name}>
                                                     <a
                                                         href={sub_item.href}

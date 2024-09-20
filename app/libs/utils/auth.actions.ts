@@ -34,7 +34,7 @@ export async function loginWithOauth({ account, profile }: LoginWithOauthParams)
         data: {
             email: profile.email!,
             name: profile.name,
-            image: profile.image,
+            image: profile.picture,
             provider: account.provider,
         }
     })

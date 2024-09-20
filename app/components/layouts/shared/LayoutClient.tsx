@@ -5,25 +5,28 @@ import { useState } from 'react'
 import Sidebar from './sidebar'
 import Header from './header'
 import AuthProvider from '@/app/libs/helpers/auth-provider'
-import Footer from "@/app/components/layouts/shared/footer";
+import Footer from "@/app/components/layouts/shared/footer"
+import AppQueryClientProvider from '@/app/libs/providers/QueryClientProvider'
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="flex h-full">
-      <AuthProvider>
-        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        <div className="flex flex-col flex-1 lg:pl-72">
-        <Header setSidebarOpen={setSidebarOpen} />
-        <main className="py-10">
-          <div className="px-4 sm:px-6 lg:px-8">
-            {children}
+    <AppQueryClientProvider>
+      <div className="flex h-full">
+        <AuthProvider>
+          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <div className="flex flex-col flex-1 lg:pl-72">
+            <Header setSidebarOpen={setSidebarOpen} />
+            <main className="py-10">
+              <div className="px-4 sm:px-6 lg:px-8">
+                {children}
+              </div>
+            </main>
+            <Footer />
           </div>
-        </main>
-          <Footer />
-        </div>
-      </AuthProvider>
-    </div>
+        </AuthProvider>
+      </div>
+    </AppQueryClientProvider>
   )
 }

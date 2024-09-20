@@ -2,6 +2,7 @@ import { Teacher } from "@/app/api/user/dto.teacher";
 
 export default function Teachers({ teachers, onButtonClick }: { teachers: Teacher[], onButtonClick: (teacherId: string) => void }) {
 
+    console.log(teachers)
     return (
         <ul role="list" className="divide-y divide-gray-100">
             {teachers.map((teacher) => (

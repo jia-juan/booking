@@ -7,6 +7,7 @@ import Pagination from "@/app/components/ui/pagination"
 import TabTeachers from "@/app/components/ui/tab/teachers"
 import Teachers from "@/app/components/ui/list/teachers"
 import { Teacher } from "@/app/api/user/dto.teacher"
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function TeachersPage() {
     const [page, setPage] = useState(0);
@@ -14,10 +15,9 @@ export default function TeachersPage() {
     const [tab, setTab] = useState('registered');
     const [totalPages, setTotalPages] = useState(0);
     const [teachers, setTeachers] = useState<Teacher[]>([]);
-    const [refresh, setRefresh] = useState(false); // 狀態追蹤按鈕點擊
     
     const { data: registeredData } = useQuery({
-        queryKey: ["registeredCount", page, limit],
+        queryKey: ["registeredData", page, limit],
         queryFn: async () => {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/teachers/registered?page=${page}&limit=${limit}`)
             return res.json()
@@ -25,7 +25,7 @@ export default function TeachersPage() {
     })
 
     const { data: allData } = useQuery({
-        queryKey: ["allCount", page, limit],
+        queryKey: ["allData", page, limit],
         queryFn: async () => {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/teachers/all?page=${page}&limit=${limit}`)
             return res.json()
@@ -43,21 +43,18 @@ export default function TeachersPage() {
             setTotalPages(Math.ceil(total / limit));
             setTeachers(tab === 'registered' ? registeredData?.registeredTeachers : allData?.teachers);
         }
-    }, [tab, tabCounts, limit, registeredData, allData, refresh]); // 監聽 refresh 狀態
+    }, [tab, tabCounts, limit, registeredData, allData]);
 
-    const handleButtonClick = (teacherId: string) => {
+    const queryClient = useQueryClient();
+
+    const handleButtonClick = async (teacherId: string) => {
         console.log(`Teacher ID: ${teacherId} button clicked`);
         // 處理按鈕點擊的邏輯
-        axios.post('/api/user/teachers/all', { teacherId }).then(() => {
-            setTeachers(prevTeachers => 
-                prevTeachers.map(teacher => 
-                    teacher.id === teacherId ? { ...teacher, registered: true } : teacher
-                )
-            );
-        });
+        await axios.post('/api/user/teachers/all', { teacherId });
+        // 重新獲取資料
+        queryClient.invalidateQueries({ queryKey: ["registeredData"] });
+        queryClient.invalidateQueries({ queryKey: ["allData"] });
     }
-
-     console.log(teachers)
 
     return (
         <>

@@ -1,9 +1,9 @@
 'use client'
 
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid'
+import { ChevronLeftIcon, ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid'
 import { useEffect, useRef } from 'react'
-import classNamesActivate from '../components/libs/classNamesActivate'
+import classNamesActivate from '@/app/components/libs/classNamesActivate'
 
 const days = [
   { date: '2021-12-27' },
@@ -54,14 +54,20 @@ export default function Calendar() {
   const container = useRef(null)
   const containerNav = useRef(null)
   const containerOffset = useRef(null)
+  const currentTimeRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    // Set the container scroll position based on the current time.
-    const currentMinute = new Date().getHours() * 60
-    container.current.scrollTop =
-      ((container.current.scrollHeight - containerNav.current.offsetHeight - containerOffset.current.offsetHeight) *
-        currentMinute) /
-      1440
+    const scrollToCurrentTime = () => {
+      if (currentTimeRef.current) {
+        currentTimeRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+      }
+    }
+
+    // 使用 setTimeout 確保滾動在 DOM 完全加載後執行
+    setTimeout(scrollToCurrentTime, 100)
   }, [])
 
   return (
@@ -91,7 +97,7 @@ export default function Calendar() {
               type="button"
               className="hidden border-y border-gray-300 px-3.5 text-sm font-semibold text-gray-900 hover:bg-gray-50 focus:relative md:block"
             >
-              Today
+              今天
             </button>
             <span className="relative -mx-px h-5 w-px bg-gray-300 md:hidden" />
             <button
@@ -108,7 +114,7 @@ export default function Calendar() {
               type="button"
               className="ml-6 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Add event
+              新增
             </button>
           </div>
           <Menu as="div" className="relative ml-6 md:hidden">
@@ -127,7 +133,7 @@ export default function Calendar() {
                     href="#"
                     className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
                   >
-                    Create event
+                    新增
                   </a>
                 </MenuItem>
               </div>
@@ -137,41 +143,7 @@ export default function Calendar() {
                     href="#"
                     className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
                   >
-                    Go to today
-                  </a>
-                </MenuItem>
-              </div>
-              <div className="py-1">
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
-                  >
-                    Day view
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
-                  >
-                    Week view
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
-                  >
-                    Month view
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-gray-900"
-                  >
-                    Year view
+                    今天
                   </a>
                 </MenuItem>
               </div>
@@ -239,145 +211,216 @@ export default function Calendar() {
               >
                 <div ref={containerOffset} className="row-end-1 h-7"></div>
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 0 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
                     12AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 1 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     1AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 2 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     2AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 3 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     3AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 4 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     4AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 5 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     5AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 6 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     6AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 7 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     7AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 8 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     8AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 9 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     9AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 10 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     10AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 11 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     11AM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 12 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     12PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 13 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     1PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 14 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     2PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 15 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     3PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 16 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     4PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 17 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     5PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 18 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     6PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 19 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     7PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 20 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     8PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 21 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     9PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 22 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     10PM
                   </div>
                 </div>
                 <div />
                 <div>
-                  <div className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400">
+                  <div
+                    ref={new Date().getHours() === 23 ? currentTimeRef : null}
+                    className="sticky left-0 -ml-14 -mt-2.5 w-14 pr-2 text-right text-xs leading-5 text-gray-400"
+                  >
                     11PM
                   </div>
                 </div>

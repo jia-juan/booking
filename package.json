@@ -19,6 +19,7 @@
     "@types/bcrypt": "^5.0.2",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
+    "date-fns": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "next": "14.2.11",
     "next-auth": "^4.24.7",
@@ -30,6 +31,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/date-fns": "^2.5.3",
     "@types/jest": "^29.5.13",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20",

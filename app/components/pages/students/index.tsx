@@ -16,7 +16,7 @@ export default function StudentsPage() {
     const [totalPages, setTotalPages] = useState(0);
     const [students, setStudents] = useState<Student[]>([]);
 
-    const { data: registeredData } = useQuery({
+    const { data: registeredData } = useQuery({  // todo 改 axios
         queryKey: ["registeredData", page, limit],
         queryFn: async () => {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/students/registered?page=${page}&limit=${limit}`)
@@ -24,7 +24,7 @@ export default function StudentsPage() {
         }
     })
 
-    const { data: pendingData } = useQuery({
+    const { data: pendingData } = useQuery({  // todo 改 axios
         queryKey: ["pendingData", page, limit],
         queryFn: async () => {
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/students/pending?page=${page}&limit=${limit}`)

@@ -45,9 +45,12 @@ model User {
     // 登入方式
     provider String @default("credentials")
 
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
-    Booking   Booking[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    course Course? // 一對一課程
+
+    Booking Booking[]
 
     EventTeacherRelation Event[]               @relation("EventTeacherRelation")
     EventStudentRelation Event[]               @relation("EventStudentRelation")
@@ -118,13 +121,30 @@ model Event {
     teacherId Int
     teacher   User @relation("EventTeacherRelation", fields: [teacherId], references: [id])
 
-    studentId Int
-    student   User @relation("EventStudentRelation", fields: [studentId], references: [id])
-
     startAt DateTime
     endAt   DateTime
 
+    // 日曆標記邏輯
+    startRow Int
+    spanRows Int
+
     status EventStatus @default(PENDING)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // 一對多學生
+    students User[] @relation("EventStudentRelation")
+}
+
+model Course {
+    userId Int  @unique
+    user   User @relation(fields: [userId], references: [id])
+
+    name        String
+    description String
+    takeTime    Int? // 上課時數 單位: 分鐘
+    maxStudent  Int? // 最大學生數
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt

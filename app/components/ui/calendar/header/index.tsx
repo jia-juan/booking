@@ -1,9 +1,12 @@
 import { ChevronLeftIcon, ChevronRightIcon, EllipsisHorizontalIcon } from '@heroicons/react/20/solid'
 import { Menu, MenuButton, MenuItems, MenuItem } from '@headlessui/react'
 import { formatDate } from '@/app/libs/utils/event.date.format'
+import { useState } from 'react'
+import Modal from '@/app/components/ui/modal'
+import CreateEventForm from '@/app/components/form/event/create'
 
-export default function CalendarHeader({ 
-    days, 
+export default function CalendarHeader({
+    days,
     setSelectedDate,
     updateDays
 }: {
@@ -11,6 +14,18 @@ export default function CalendarHeader({
     setSelectedDate: (date: string) => void,
     updateDays: (days: any[]) => void
 }) {
+
+    const [modalState, setModalState] = useState({
+        isCreateModalOpen: false,
+    });
+
+    const openCreateModal = () => setModalState(prev => ({ ...prev, isCreateModalOpen: true }));
+    const closeAllModals = () => setModalState({ isCreateModalOpen: false });
+
+    const handleSaveEvent = () => {
+        // TODO: 重設 days，父類別重新渲染 events
+        closeAllModals();
+    }
 
     const selectedDay = days.find((day) => day.isSelected)
     if (!selectedDay) {
@@ -49,7 +64,7 @@ export default function CalendarHeader({
                     </time>
                     <time dateTime={date.toLocaleDateString()} className="hidden sm:inline">
                         {year} 年 {month} 月 {day} 日
-                    </time> 
+                    </time>
                 </h1>
                 <p className="mt-1 text-sm text-gray-500">{dayOfWeek}</p>
             </div>
@@ -83,11 +98,17 @@ export default function CalendarHeader({
                 <div className="hidden md:ml-4 md:flex md:items-center">
                     <div className="ml-6 h-6 w-px bg-gray-300" />
                     <button
+                        onClick={openCreateModal}
                         type="button"
                         className="ml-6 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
                         新增
                     </button>
+                    <Modal isOpen={modalState.isCreateModalOpen} onClose={closeAllModals}>
+                        <div onClick={(e) => e.stopPropagation()}>
+                            <CreateEventForm onClose={closeAllModals} onSave={handleSaveEvent} />
+                        </div>
+                    </Modal>
                 </div>
                 <Menu as="div" className="relative ml-6 md:hidden">
                     <MenuButton className="-mx-2 flex items-center rounded-full border border-transparent p-2 text-gray-400 hover:text-gray-500">

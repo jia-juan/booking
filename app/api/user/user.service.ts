@@ -276,7 +276,7 @@ class UserService {
         return courseSettings;
     }
 
-    async updateCourseSettings(userId: number, takeTime: number | null, maxStudent: number) {
+    async updateCourseSettings(userId: number, takeTime: number, maxStudent: number) {
         const user = await prisma.user.findUnique({
             where: {
                 id: userId

@@ -104,7 +104,7 @@ class UserController {
         }
     }
 
-    async updateCourseSettings(userId: number, takeTime: number | null, maxStudent: number) {
+    async updateCourseSettings(userId: number, takeTime: number, maxStudent: number) {
         try {
             await this.userService.updateCourseSettings(userId, takeTime, maxStudent);
             return NextResponse.json({ message: '更新成功' });

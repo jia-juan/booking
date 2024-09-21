@@ -45,10 +45,12 @@ model User {
     // 登入方式
     provider String @default("credentials")
 
+    // 課程設定
+    takeTime   Int  @default(0) // 上課時數 單位: 分鐘
+    maxStudent Int  @default(1)
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-
-    course Course? // 一對一課程
 
     Booking Booking[]
 
@@ -135,17 +137,4 @@ model Event {
 
     // 一對多學生
     students User[] @relation("EventStudentRelation")
-}
-
-model Course {
-    userId Int  @unique
-    user   User @relation(fields: [userId], references: [id])
-
-    name        String
-    description String
-    takeTime    Int? // 上課時數 單位: 分鐘
-    maxStudent  Int? // 最大學生數
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
 }

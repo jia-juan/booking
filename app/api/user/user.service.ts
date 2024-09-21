@@ -256,6 +256,51 @@ class UserService {
         return { students: students, total };
     }
 
+    async getCourseSettings(userId: number) {
+        const courseSettings = await prisma.user.findUnique({
+            where: {
+                id: userId
+            },
+            select: {
+                id: true,
+                role: true,
+                takeTime: true,
+                maxStudent: true
+            }
+        });
+
+        if (!courseSettings) {
+            throw new Error('Course settings not found');
+        }
+
+        return courseSettings;
+    }
+
+    async updateCourseSettings(userId: number, takeTime: number | null, maxStudent: number) {
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        if (user.role !== 'TEACHER') {
+            throw new Error('User is not a teacher');
+        }
+        
+        await prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                takeTime,
+                maxStudent
+            }
+        });
+    }
 }
 
 export default UserService;

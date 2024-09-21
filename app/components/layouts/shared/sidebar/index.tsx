@@ -10,7 +10,7 @@ import Loading from '@/app/components/ui/loading'
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: boolean; setSidebarOpen: (open: boolean) => void }) {
     const { data: session, status } = useSession()
-    
+
     if (status === 'loading') {
         return <Loading />
     }
@@ -102,20 +102,21 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: 
                                                     ))}
                                                 </ul>
                                             </li>
-                                            <li className="mt-auto">
-                                                <a
-                                                    href="/settings"
-                                                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
-                                                >
-                                                    <Cog6ToothIcon
-                                                        aria-hidden="true"
-                                                        className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
-                                                    />
-                                                    設定
-                                                </a>
-                                            </li>
+
                                         </>
                                     )}
+                                    <li className="mt-auto">
+                                        <a
+                                            href="/settings"
+                                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
+                                        >
+                                            <Cog6ToothIcon
+                                                aria-hidden="true"
+                                                className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
+                                            />
+                                            設定
+                                        </a>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>
@@ -194,20 +195,21 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }: { sidebarOpen: 
                                             ))}
                                         </ul>
                                     </li>
-                                    <li className="mt-auto">
-                                        <a
-                                            href="/settings"
-                                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
-                                        >
-                                            <Cog6ToothIcon
-                                                aria-hidden="true"
-                                                className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
-                                            />
-                                            設定
-                                        </a>
-                                    </li>
+
                                 </>
                             )}
+                            <li className="mt-auto">
+                                <a
+                                    href="/settings"
+                                    className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-indigo-600"
+                                >
+                                    <Cog6ToothIcon
+                                        aria-hidden="true"
+                                        className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-indigo-600"
+                                    />
+                                    設定
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                 </div>

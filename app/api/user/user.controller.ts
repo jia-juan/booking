@@ -95,6 +95,25 @@ class UserController {
         }
     }
 
+    async getCourseSettings(userId: number) {
+        try {
+            const courseSettings = await this.userService.getCourseSettings(userId);
+            return NextResponse.json(courseSettings);
+        } catch (error) {
+            return NextResponse.error();
+        }
+    }
+
+    async updateCourseSettings(userId: number, takeTime: number | null, maxStudent: number) {
+        try {
+            await this.userService.updateCourseSettings(userId, takeTime, maxStudent);
+            return NextResponse.json({ message: '更新成功' });
+        } catch (error) {
+            return NextResponse.json({ message: (error as Error).message }, { status: 400 });
+        }
+    }
+    
+
 }
 
 export default new UserController();

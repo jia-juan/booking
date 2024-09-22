@@ -65,7 +65,6 @@ export default function UpdateEventForm({ eventId, onClose, onSave }: UpdateEven
     }, [eventId, form]);
 
     const onSubmit = (data: any) => {
-
         const studentIds = selectedStudents
             .map((student: any) => Number(student))
             .filter(id => id !== 0);  // 取消選擇 0

@@ -151,6 +151,7 @@ export class EventService {
                 id: eventId
             }
         })
+        return event;
     }
 }
 

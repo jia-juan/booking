@@ -34,7 +34,7 @@ export default function CalendarPage() {
     const { data: fetchedDays, isLoading, error, refetch } = useQuery({
         queryKey: ['calendar', currentYear, currentMonth],
         queryFn: fetchCalendar,
-        onSuccess: (data) => setDays(data)
+        onSuccess: (data: any) => setDays(data)
     });
 
     useEffect(() => {

@@ -8,6 +8,7 @@ import Notifications from '@/app/components/ui/notifications'
 import { eventFormValidation } from '@/app/libs/validators/event'
 import { addMinutes, format } from 'date-fns'
 import { useSession } from 'next-auth/react'
+import DeleteEventAlert from '@/app/components/ui/alert/event/delete'
 
 function formatToDateTimeLocal(date: Date): string {
     return format(date, "yyyy-MM-dd'T'HH:mm")
@@ -28,6 +29,7 @@ export default function UpdateEventForm({ eventId, onClose, onSave }: UpdateEven
     const [registeredStudents, setRegisteredStudents] = useState<any>([])
     const [notification, setNotification] = useState<{ type: 'success' | 'error', title: string, message: string } | null>(null);
     const [selectedStudents, setSelectedStudents] = useState<any[]>([]);
+    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
     const form = useForm({
         resolver: zodResolver(eventFormValidation),
@@ -113,8 +115,20 @@ export default function UpdateEventForm({ eventId, onClose, onSave }: UpdateEven
         return registeredStudents.filter((student: any) => !selectedStudents.includes(student.id) || selectedStudents[index] === student.id);
     }
 
+    const handleDeleteEvent = async () => {
+        try {
+            await axios.delete(`/api/event/event/${eventId}`);
+            setNotification({ type: 'success', title: '成功', message: '事件已刪除' });
+            onSave();
+        } catch (error) {
+            setNotification({ type: 'error', title: '錯誤', message: '刪除事件失敗' });
+        } finally {
+            setShowDeleteAlert(false);
+        }
+    };
+
     return (
-        <div className="px-4 sm:px-6 lg:px-8">
+        <div className="px-4 sm:px-6 lg:px-8 relative z-0"> {/* 確保 z-index 不會影響 DeleteEventAlert */}
             <form onSubmit={form.handleSubmit(onSubmit)}>
                 <div className="space-y-12">
                     <div className="border-b border-gray-900/10 pb-12">
@@ -187,6 +201,13 @@ export default function UpdateEventForm({ eventId, onClose, onSave }: UpdateEven
                     </div>
                 </div>
                 <div className="mt-6 flex items-center justify-between gap-x-6">
+                    <button
+                        type="button"
+                        className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500"
+                        onClick={() => setShowDeleteAlert(true)} // 顯示刪除彈出框
+                    >
+                        刪除
+                    </button>
                     <div className="flex gap-x-6 ml-auto">
                         <button
                             type="button"
@@ -204,6 +225,12 @@ export default function UpdateEventForm({ eventId, onClose, onSave }: UpdateEven
                     </div>
                 </div>
             </form>
+            {showDeleteAlert && (
+                <DeleteEventAlert
+                    onDelete={handleDeleteEvent}
+                    onCancel={() => setShowDeleteAlert(false)}
+                />
+            )}
             {notification && <Notifications type={notification.type} title={notification.title} message={notification.message} />}
         </div>
     )

@@ -24,6 +24,11 @@ class EventController {
         const event = await eventService.updateEvent(teacherId, eventId, startAt, endAt, students);
         return NextResponse.json(event);
     }
+
+    async deleteEventById(eventId: number) {
+        const event = await eventService.deleteEvent(eventId);
+        return NextResponse.json(event);
+    }
 }
 
 export default new EventController();

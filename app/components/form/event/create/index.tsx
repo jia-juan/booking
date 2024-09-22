@@ -54,9 +54,6 @@ export default function CreateEventForm({ onClose, onSave }: CreateEventFormProp
     }, [])
 
     const onSubmit = (data: any) => {
-        console.log(data)
-        console.log(selectedStudents)
-
         const studentIds = selectedStudents.map((student: any) => Number(student));
         
         axios.post('/api/event/event', {

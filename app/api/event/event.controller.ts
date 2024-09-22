@@ -6,7 +6,6 @@ class EventController {
 
     async createEvent(teacherId: number, startAt: Date, endAt: Date, students: User[]) {
 
-        console.log(students)
         const event = await this.eventService.createEvent(teacherId, startAt, endAt, students);
         return NextResponse.json(event);
     }

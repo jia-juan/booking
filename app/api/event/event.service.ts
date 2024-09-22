@@ -1,4 +1,6 @@
 import prisma from "@/app/libs/helpers/prisma";
+import { utcToLocal } from "@/app/libs/utils/date.utc.to.local";
+import { calculateRowSpan } from "@/app/libs/utils/calculate.event.rowspan";
 
 export interface User {
     id: number;
@@ -13,13 +15,24 @@ export class EventService {
 
     async createEvent(teacherId: number, startAt: Date, endAt: Date, students: User[]) {
 
+        // 時區轉換
+        const localStartAt = utcToLocal(startAt);
+        const localEndAt = utcToLocal(endAt);
+
+        // MVP1 當天檢查控制，TODO 之後跨天需移除
+        if (
+            localStartAt.getDate() !== localEndAt.getDate()
+        ) {
+            throw new Error("事件時間範圍跨天");
+        }
+
         // 重複避免
         const overlappingEvent = await this.prisma.event.findFirst({
             where: {
                 AND: [
                     { teacherId: teacherId },
-                    { startAt: { lt: endAt } },
-                    { endAt: { gt: startAt } }
+                    { startAt: { lt: localEndAt } },
+                    { endAt: { gt: localStartAt } }
                 ]
             }
         });
@@ -29,9 +42,7 @@ export class EventService {
             throw new Error("事件時間範圍重疊");
         }
 
-        // TODO 計算startRow和spanRows
-        const startRow = 0;
-        const spanRows = 0;
+        const { startRow, spanRows } = calculateRowSpan(localStartAt, localEndAt);
 
         const event = await this.prisma.event.create({
             data: {

@@ -9,12 +9,10 @@ export default function CalendarHeader({
     days,
     setSelectedDate,
     updateDays,
-    refetchCalendar
 }: {
     days: any[],
     setSelectedDate: (date: string) => void,
     updateDays: (days: any[]) => void,
-    refetchCalendar: () => void
 }) {
 
     const [modalState, setModalState] = useState({
@@ -25,7 +23,6 @@ export default function CalendarHeader({
     const closeAllModals = () => setModalState({ isCreateModalOpen: false });
 
     const handleSaveEvent = () => {
-        refetchCalendar();
         closeAllModals();
     }
 

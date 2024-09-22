@@ -54,7 +54,9 @@ export default function CreateEventForm({ onClose, onSave }: CreateEventFormProp
     }, [])
 
     const onSubmit = (data: any) => {
-        const studentIds = selectedStudents.map((student: any) => Number(student));
+        const studentIds = selectedStudents
+            .map((student: any) => Number(student))
+            .filter(id => id !== 0);  // 取消選擇 0
         
         axios.post('/api/event/event', {
             teacherId: Number(session?.user?._id),

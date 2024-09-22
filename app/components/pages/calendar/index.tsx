@@ -31,7 +31,7 @@ export default function CalendarPage() {
         return data;
     }
 
-    const { data: fetchedDays, isLoading, error, refetch } = useQuery({
+    const { data: fetchedDays, isLoading, error } = useQuery({
         queryKey: ['calendar', currentYear, currentMonth],
         queryFn: fetchCalendar,
         onSuccess: (data: any) => setDays(data)
@@ -111,7 +111,6 @@ export default function CalendarPage() {
                 days={days}
                 setSelectedDate={handleDateChange}
                 updateDays={updateDays}
-                refetchCalendar={refetch}
             />
             <div className="isolate flex flex-auto overflow-hidden bg-white">
                 <div ref={container} className="flex flex-auto flex-col overflow-auto">

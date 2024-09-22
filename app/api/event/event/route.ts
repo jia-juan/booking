@@ -6,3 +6,4 @@ export const POST = async (req: Request) => {
     const event = await EventController.createEvent(teacherId, new Date(startAt), new Date(endAt), students);
     return NextResponse.json(event);
 }
+

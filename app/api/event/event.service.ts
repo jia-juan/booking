@@ -60,12 +60,28 @@ export class EventService {
         return event;
     }
 
-    async getEventsByTeacherId(teacherId: number) {
+    async getEventsByTeacherId(teacherId: number, year: number, month: number) {
+        const startOfMonth = utcToLocal(new Date(Date.UTC(year, month - 1, 1)));
+        const endOfMonth = utcToLocal(new Date(Date.UTC(year, month, 0)));
+    
         const events = await this.prisma.event.findMany({
             where: {
-                teacherId
+                teacherId,
+                startAt: {
+                    gte: startOfMonth,
+                    lte: endOfMonth
+                }
+            },
+            include: {
+                students: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
             }
-        })
+        });
+        return events;
     }
 
     async getEventsByEventId(eventId: number) {
@@ -99,3 +115,5 @@ export class EventService {
         })
     }
 }
+
+export const eventService = new EventService();

@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
-import { EventService, User } from './event.service';
+import { eventService, User } from './event.service';
 
 class EventController {
-    private readonly eventService = new EventService();
 
     async createEvent(teacherId: number, startAt: Date, endAt: Date, students: User[]) {
 
-        const event = await this.eventService.createEvent(teacherId, startAt, endAt, students);
+        const event = await eventService.createEvent(teacherId, startAt, endAt, students);
         return NextResponse.json(event);
+    }
+
+    async getEventsByTeacherId(teacherId: number, year: number, month: number) {
+
+        const events = await eventService.getEventsByTeacherId(teacherId, year, month);
+        return NextResponse.json(events);
     }
 }
 

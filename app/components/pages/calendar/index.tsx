@@ -22,6 +22,8 @@ export default function CalendarPage() {
     const [currentYear, setCurrentYear] = useState<number>(new Date().getFullYear());
     const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth() + 1);
 
+    const [currentDateEvents, setCurrentDateEvents] = useState<any[]>([]);
+
     const [notification, setNotification] = useState<{ type: 'success' | 'error', title: string, message: string } | null>(null);
 
     const fetchCalendar = async () => {
@@ -29,7 +31,7 @@ export default function CalendarPage() {
         return data;
     }
 
-    const { data: fetchedDays, isLoading, error } = useQuery({
+    const { data: fetchedDays, isLoading, error, refetch } = useQuery({
         queryKey: ['calendar', currentYear, currentMonth],
         queryFn: fetchCalendar,
         onSuccess: (data) => setDays(data)
@@ -55,7 +57,12 @@ export default function CalendarPage() {
         if (newMonth !== currentMonth) {
             setCurrentMonth(newMonth);
         }
+
     };
+
+    useEffect(() => {
+        setCurrentDateEvents(days.find(day => day.date === currentDate)?.events || []);
+    }, [days, currentDate]); // 修改這行，添加 days 作為依賴
 
     useEffect(() => {
         if (fetchedDays) {
@@ -100,7 +107,12 @@ export default function CalendarPage() {
 
     return (
         <div className="flex h-full flex-col">
-            <CalendarHeader days={days} setSelectedDate={handleDateChange} updateDays={updateDays} />
+            <CalendarHeader
+                days={days}
+                setSelectedDate={handleDateChange}
+                updateDays={updateDays}
+                refetchCalendar={refetch}
+            />
             <div className="isolate flex flex-auto overflow-hidden bg-white">
                 <div ref={container} className="flex flex-auto flex-col overflow-auto">
                     <CalendarGridDay
@@ -118,7 +130,9 @@ export default function CalendarPage() {
                                 currentTimeRef={currentTimeRef}
                             />
                             {/* Events */}
-                            <CalendarEvent />
+                            <CalendarEvent
+                                currentDateEvents={currentDateEvents}
+                            />
                         </div>
                     </div>
                 </div>
@@ -128,7 +142,13 @@ export default function CalendarPage() {
                     updateDays={updateDays}
                 />
             </div>
-            {notification && <Notifications type={notification.type} title={notification.title} message={notification.message} />}
+            {notification &&
+                <Notifications
+                    type={notification.type}
+                    title={notification.title}
+                    message={notification.message}
+                />
+            }
         </div>
     )
 }

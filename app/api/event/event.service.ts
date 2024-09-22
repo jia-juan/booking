@@ -2,10 +2,6 @@ import prisma from "@/app/libs/helpers/prisma";
 import { utcToLocal } from "@/app/libs/utils/date.utc.to.local";
 import { calculateRowSpan } from "@/app/libs/utils/calculate.event.rowspan";
 
-export interface User {
-    id: number;
-}
-
 export class EventService {
     private readonly prisma = prisma;
 
@@ -13,7 +9,7 @@ export class EventService {
         this.prisma = prisma;
     }
 
-    async createEvent(teacherId: number, startAt: Date, endAt: Date, students: User[]) {
+    async createEvent(teacherId: number, startAt: Date, endAt: Date, students: number[]) {
 
         // 時區轉換
         const localStartAt = utcToLocal(startAt);
@@ -85,14 +81,53 @@ export class EventService {
     }
 
     async getEventsByEventId(eventId: number) {
-        const events = await this.prisma.event.findUnique({
+        const event = await this.prisma.event.findUnique({
             where: {
                 id: eventId
+            },
+            include: {
+                students: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
             }
         })
+        return event;
     }
 
-    async updateEvent(eventId: number, startAt: Date, endAt: Date, students: User[]) {
+    async updateEvent(teacherId: number, eventId: number, startAt: Date, endAt: Date, students: number[]) {
+        // 時區轉換
+        const localStartAt = utcToLocal(startAt);
+        const localEndAt = utcToLocal(endAt);
+
+        // MVP1 當天檢查控制，TODO 之後跨天需移除
+        if (
+            localStartAt.getDate() !== localEndAt.getDate()
+        ) {
+            throw new Error("事件時間範圍跨天");
+        }
+
+        // 重複避免
+        const overlappingEvent = await this.prisma.event.findFirst({
+            where: {
+                AND: [
+                    { teacherId: teacherId },
+                    { startAt: { lt: localEndAt } },
+                    { endAt: { gt: localStartAt } },
+                    { id: { not: eventId } }  // 排除自身
+                ]
+            }
+        });
+
+        if (overlappingEvent) {
+            console.log("事件時間範圍重疊: " + overlappingEvent);
+            throw new Error("事件時間範圍重疊");
+        }
+
+        const { startRow, spanRows } = calculateRowSpan(localStartAt, localEndAt);
+
         const event = await this.prisma.event.update({
             where: {
                 id: eventId
@@ -100,11 +135,14 @@ export class EventService {
             data: {
                 startAt,
                 endAt,
+                startRow,
+                spanRows,
                 students: {
-                    set: students
+                    set: students.map(student => ({ id: student }))
                 }
             }
         })
+        return event;
     }
 
     async deleteEvent(eventId: number) {

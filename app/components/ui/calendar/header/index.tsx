@@ -8,11 +8,13 @@ import CreateEventForm from '@/app/components/form/event/create'
 export default function CalendarHeader({
     days,
     setSelectedDate,
-    updateDays
+    updateDays,
+    refetchCalendar
 }: {
     days: any[],
     setSelectedDate: (date: string) => void,
-    updateDays: (days: any[]) => void
+    updateDays: (days: any[]) => void,
+    refetchCalendar: () => void
 }) {
 
     const [modalState, setModalState] = useState({
@@ -23,7 +25,7 @@ export default function CalendarHeader({
     const closeAllModals = () => setModalState({ isCreateModalOpen: false });
 
     const handleSaveEvent = () => {
-        // TODO: 重設 days，父類別重新渲染 events
+        refetchCalendar();
         closeAllModals();
     }
 
@@ -106,7 +108,10 @@ export default function CalendarHeader({
                     </button>
                     <Modal isOpen={modalState.isCreateModalOpen} onClose={closeAllModals}>
                         <div onClick={(e) => e.stopPropagation()}>
-                            <CreateEventForm onClose={closeAllModals} onSave={handleSaveEvent} />
+                            <CreateEventForm
+                                onClose={closeAllModals}
+                                onSave={handleSaveEvent}                        
+                            />
                         </div>
                     </Modal>
                 </div>

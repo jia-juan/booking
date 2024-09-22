@@ -59,6 +59,8 @@ export default function StudentsPage() {
         queryClient.invalidateQueries({ queryKey: ["pendingData"] });
     }
 
+    console.log(students)
+
     return (
         <>
             <TabStudents setTab={setTab} tabCounts={tabCounts} />

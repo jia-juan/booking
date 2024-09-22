@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Notifications from '@/app/components/ui/notifications'
 import { eventFormValidation } from '@/app/libs/validators/event'
 import { addMinutes, format } from 'date-fns'
+import { useSession } from 'next-auth/react'
 
 function formatToDateTimeLocal(date: Date): string {
     return format(date, "yyyy-MM-dd'T'HH:mm")
@@ -19,6 +20,8 @@ interface CreateEventFormProps {
 
 
 export default function CreateEventForm({ onClose, onSave }: CreateEventFormProps) {
+
+    const { data: session } = useSession();
 
     const [takenTimes, setTakenTimes] = useState<number>(0)
     const [maxStudent, setMaxStudent] = useState<number>(1)
@@ -51,9 +54,17 @@ export default function CreateEventForm({ onClose, onSave }: CreateEventFormProp
     }, [])
 
     const onSubmit = (data: any) => {
-        // TODO: 新增事件，重複的學員只創建一ㄘ
-        console.log(selectedStudents)
         console.log(data)
+        console.log(selectedStudents)
+
+        const studentIds = selectedStudents.map((student: any) => Number(student));
+        
+        axios.post('/api/event/event', {
+            teacherId: Number(session?.user?._id),
+            startAt: data.startTime,
+            endAt: data.endTime,
+            students: studentIds
+        })
         onSave()
     }
 
@@ -78,6 +89,12 @@ export default function CreateEventForm({ onClose, onSave }: CreateEventFormProp
         newSelectedStudents[index] = selectedId;
         setSelectedStudents(newSelectedStudents);
     }
+
+    const handleStudentDeselect = (index: number) => {
+        const newSelectedStudents = [...selectedStudents];
+        newSelectedStudents[index] = null;
+        setSelectedStudents(newSelectedStudents);
+    };
 
     const availableStudents = (index: number) => {
         return registeredStudents.filter((student: any) => !selectedStudents.includes(student.id) || selectedStudents[index] === student.id);
@@ -135,6 +152,7 @@ export default function CreateEventForm({ onClose, onSave }: CreateEventFormProp
                                             name={`student-${index}`}
                                             value={selectedStudents[index] || ''}
                                             onChange={(event) => handleStudentSelect(event, index)}
+                                            onClick={() => handleStudentDeselect(index)} // 新增這行
                                             className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                         >
                                             <option value="" disabled>選擇學員</option>

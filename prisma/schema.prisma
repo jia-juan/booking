@@ -46,13 +46,13 @@ model User {
     provider String @default("credentials")
 
     // 課程設定
-    takeTime   Int  @default(0) // 上課時數 單位: 分鐘
-    maxStudent Int  @default(1)
+    takeTime   Int @default(0) // 上課時數 單位: 分鐘
+    maxStudent Int @default(1)
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    Booking Booking[]
+    Booking Booking[] @relation("BookingStudentRelation")
 
     EventTeacherRelation Event[]               @relation("EventTeacherRelation")
     EventStudentRelation Event[]               @relation("EventStudentRelation")
@@ -96,14 +96,15 @@ model RegisteredStudent {
 enum BookingStatus {
     PENDING
     REJECTED
+    EXPIRED
     CONFIRMED
 }
 
 model Booking {
     id Int @id @default(autoincrement())
 
-    createdById Int
-    createdBy   User @relation(fields: [createdById], references: [id])
+    studentId Int
+    student   User @relation("BookingStudentRelation", fields: [studentId], references: [id])
 
     status BookingStatus @default(PENDING)
 
